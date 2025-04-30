@@ -120,10 +120,10 @@ public class TelaCalculadoraIdade extends javax.swing.JFrame {
         int anoNascimento = Integer.parseInt(spnAno.getValue().toString());
         
         // Calcula a idade com base no ano atual (2025).
-        int idade = 2025 - anoNasc;
+        int idade = 2025 - anoNascismento;
         
         // Exibe a idade calculada no rótulo lblResultadoIdade.
-        lblIdade.setText(Interger.toString(idade));
+        lblResultadoIdade.setText(Interger.toString(idade));
     }//GEN-LAST:event_btnCalcularActionPerformed
 
     /**

@@ -25,14 +25,15 @@ public class CursoSave {
         try {
             // Criar um novo curso
             Curso novoCurso = new Curso();
-            novoCurso.setNome("POO");
-            novoCurso.setCodigoCurso("prg03");
+            novoCurso.setNome("ANALISE E DESENVOLVIMENTO DE SISTEMAS");
+            novoCurso.setCodigoCurso("ads");
             novoCurso.setAtivo(true);
-            
+            novoCurso.setCoordenador("Jonatas");
+           
             // Iniciar transação
             em.getTransaction().begin();
             
-            // Persistie o curso
+            // Persiste o curso
             em.persist(novoCurso);
             
             // Commita a transação

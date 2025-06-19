@@ -32,10 +32,14 @@ public class Curso {
     @Column (name = "codigo_curso", nullable = false, unique = true)
     private String codigoCurso;
     
+    @Column (name = "coordenador", nullable = false)
+    private String coordenador;
+    
     // coluna ativo na tabela indica se o curso esta ativo ou não
     @Column (name = "ativo")
     private boolean ativo;
 
+    //Métodos getters e setters
     public long getId() {
         return id;
     }
@@ -63,4 +67,14 @@ public class Curso {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
+
+    public String getCoordenador() {
+        return coordenador;
+    }
+
+    public void setCoordenador(String coordenador) {
+        this.coordenador = coordenador;
+    }
+
+
 }

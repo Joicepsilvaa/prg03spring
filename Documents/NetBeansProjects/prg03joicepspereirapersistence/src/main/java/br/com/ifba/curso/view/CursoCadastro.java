@@ -4,6 +4,10 @@
  */
 package br.com.ifba.curso.view;
 
+import br.com.ifba.CursoSave;
+import br.com.ifba.curso.entity.Curso;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Joice
@@ -15,6 +19,7 @@ public class CursoCadastro extends javax.swing.JFrame {
      */
     public CursoCadastro() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -28,15 +33,15 @@ public class CursoCadastro extends javax.swing.JFrame {
 
         jComboBox2 = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        lblNome = new javax.swing.JLabel();
+        lblCodigo = new javax.swing.JLabel();
+        lblCoordenador = new javax.swing.JLabel();
+        lblDisponbilidade = new javax.swing.JLabel();
+        txtCoordenador = new javax.swing.JTextField();
+        txtNome = new javax.swing.JTextField();
+        txtCodigo = new javax.swing.JTextField();
+        cbbDisponibilidade = new javax.swing.JComboBox<>();
+        btnSalvar = new javax.swing.JButton();
         lblDescricao = new javax.swing.JLabel();
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -46,39 +51,39 @@ public class CursoCadastro extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(153, 205, 133));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 51, 51));
-        jLabel1.setText("Nome");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 50, 20));
+        lblNome.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNome.setForeground(new java.awt.Color(0, 51, 51));
+        lblNome.setText("Nome");
+        jPanel1.add(lblNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 50, 20));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 51, 51));
-        jLabel2.setText("Código");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 120, 50, 20));
+        lblCodigo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCodigo.setForeground(new java.awt.Color(0, 51, 51));
+        lblCodigo.setText("Código");
+        jPanel1.add(lblCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 120, 50, 20));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 51, 51));
-        jLabel3.setText("Coordenador");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, 100, 20));
+        lblCoordenador.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCoordenador.setForeground(new java.awt.Color(0, 51, 51));
+        lblCoordenador.setText("Coordenador");
+        jPanel1.add(lblCoordenador, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, 100, 20));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 51, 51));
-        jLabel4.setText("Disponibilidade");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 200, 110, 20));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 160, 310, 30));
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, 310, 30));
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 310, 30));
+        lblDisponbilidade.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblDisponbilidade.setForeground(new java.awt.Color(0, 51, 51));
+        lblDisponbilidade.setText("Disponibilidade");
+        jPanel1.add(lblDisponbilidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 200, 110, 20));
+        jPanel1.add(txtCoordenador, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 160, 310, 30));
+        jPanel1.add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, 310, 30));
+        jPanel1.add(txtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 310, 30));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 200, 310, 30));
+        cbbDisponibilidade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ativo", "Inativo" }));
+        jPanel1.add(cbbDisponibilidade, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 200, 310, 30));
 
-        jButton1.setText("SALVAR");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnSalvar.setText("SALVAR");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnSalvarActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 270, 80, 30));
+        jPanel1.add(btnSalvar, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 270, 80, 30));
 
         lblDescricao.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lblDescricao.setForeground(new java.awt.Color(0, 51, 51));
@@ -105,10 +110,45 @@ public class CursoCadastro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // Pega os valores dos campos
+        String nome = txtNome.getText().trim();
+        String coordenador = txtCoordenador.getText().trim();
+        String disponibilidade = (String) cbbDisponibilidade.getSelectedItem();
 
+        // Validação dos campos obrigatórios
+        if (nome.isEmpty() || coordenador.isEmpty() || disponibilidade == null) {
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
+            return;
+        }
+
+        // Cria um novo curso com os dados
+        Curso curso = new Curso();
+        curso.setNome(nome);
+        curso.setCodigoCurso(txtCodigo.getText());
+        curso.setCoordenador(coordenador);
+        curso.setAtivo("Ativo".equalsIgnoreCase(disponibilidade));
+
+        try {
+            // Salva no banco de dados
+            CursoSave cursoSave = new CursoSave();
+            cursoSave.save(curso);
+            JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
+
+            // Limpa os campos depois que salva
+            limparCampos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnSalvarActionPerformed
+    // Limpa todos os campos do formulario
+    private void limparCampos() {
+        txtNome.setText("");
+        txtCodigo.setText("");
+        txtCoordenador.setText("");
+        cbbDisponibilidade.setSelectedIndex(0); // Seleciona o primeiro item do combobox
+}
     /**
      * @param args the command line arguments
      */
@@ -145,17 +185,17 @@ public class CursoCadastro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.JComboBox<String> cbbDisponibilidade;
     private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblCoordenador;
     private javax.swing.JLabel lblDescricao;
+    private javax.swing.JLabel lblDisponbilidade;
+    private javax.swing.JLabel lblNome;
+    private javax.swing.JTextField txtCodigo;
+    private javax.swing.JTextField txtCoordenador;
+    private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,9 +5,8 @@
 package br.com.ifba;
 
 import br.com.ifba.curso.entity.Curso;
+import br.com.ifba.curso.infrastructure.JPAUtil;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 /**
  *
@@ -15,44 +14,26 @@ import javax.persistence.Persistence;
  */
 public class CursoSave {
     
-    public static void main(String[] args) {
-        // Cria o EntityManagerFactory
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("prg03persistenciaPU");
-    
-        // Cria o EntityManager
-        EntityManager em = emf.createEntityManager();
-        
-        try {
-            // Criar um novo curso
-            Curso novoCurso = new Curso();
-            novoCurso.setNome("ANALISE E DESENVOLVIMENTO DE SISTEMAS");
-            novoCurso.setCodigoCurso("ads");
-            novoCurso.setAtivo(true);
-            novoCurso.setCoordenador("Jonatas");
-           
-            // Iniciar transação
-            em.getTransaction().begin();
-            
-            // Persiste o curso
-            em.persist(novoCurso);
-            
-            // Commita a transação
-            em.getTransaction().commit();
-            
-            System.out.println("Curso salvo com sucesso! ID: " + novoCurso.getId());
-            
-        } catch (Exception e) {
-            // Em caso de erro, fazer rollback
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            System.err.println("Erro ao salvar curso:");
-            e.printStackTrace();
-        } finally {
-            //Fecha os recursos
-            em.close();
-            emf.close();
-        }
-    }
+    // Método que salva um curso no banco
+    public void save(Curso curso) {
+        // Pega a conexão com o banco (EntityManager)
+        EntityManager em = JPAUtil.getEntityManager();
+
+           try {
+               em.getTransaction().begin(); // Começa uma transação
+               em.persist(curso); // Manda salvar o curso no banco
+               em.getTransaction().commit(); // Confirma tudo se deu certo
+               
+           } catch (Exception e) {
+               // Se deu erro, verifica se a transação tá ativa pra desfazer
+               if (em.getTransaction().isActive()) {
+                   em.getTransaction().rollback();
+               }
+               //Exibe uma mensagem de erro
+               throw new RuntimeException("Erro ao salvar curso: " + e.getMessage(), e);
+           } finally {
+               em.close(); // Fecha a conexão com o banco, mesmo se der erro
+           }
+       }
 }
  

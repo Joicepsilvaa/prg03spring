@@ -1,90 +1,141 @@
 package br.com.ifba.curso.view.components;
 
+import br.com.ifba.CursoList;
+import br.com.ifba.curso.entity.Curso;
+import br.com.ifba.curso.view.CursoEditar;
 import br.com.ifba.curso.view.CursoListar;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableCellEditor;
 import java.net.URL;
+import javax.swing.AbstractCellEditor;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
-public class BotaoRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+/**
+ * Classe que cria botões de ação para tabelas (editar/remover)
+ */
+public class BotaoRendererEditor extends AbstractCellEditor 
+    implements TableCellRenderer, TableCellEditor {
 
-    private final JButton button;
-    private final String tipo;  // para definit o tipo do botão
-    private JTable tabela;
-    private int linha;          // para a linha que está sendo editada
+    private final JButton button; // O botão que será exibido
+    private final String tipo;    // Tipo do botão ("Editar" ou "Remover")
+    private final JTable tabela;  // Tabela onde o botão está
+    private int linha;           // Linha clicada na tabela
 
     public BotaoRendererEditor(String tipo, JTable tabela) {
         this.tipo = tipo;
         this.tabela = tabela;
-        this.button = new JButton();
+        this.button = new JButton(tipo);
+        button.setText(""); // Remove o texto do botão
         
-        // Centraliza o ícone no botão
-        button.setHorizontalAlignment(SwingConstants.CENTER);
-        button.setVerticalAlignment(SwingConstants.CENTER);
-
-        // Carrega o ícone no botão
+        // Coloca o ícone correto no botão
         if ("Editar".equals(tipo)) { 
             button.setIcon(loadIcon("/br/com/ifba/curso/images/editar.png"));
         } else if ("Remover".equals(tipo)) { 
             button.setIcon(loadIcon("/br/com/ifba/curso/images/remover.png"));
         }
 
-        button.setToolTipText(tipo);  // Tooltip com o tipo de ação
-
-        // ActionListener para tratar os cliques
+        // Tooltip mostra o que o botão faz
+        button.setToolTipText(tipo);  
+        
+        // Configura o que acontece quando clica no botão
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int linhaSelecionada = tabela.convertRowIndexToModel(linha);
+                // O ID agora está na coluna 0 (primeira coluna)
                 Object idObj = tabela.getModel().getValueAt(linhaSelecionada, 0);
-                
-                // Valida o ID
+
                 if (idObj == null) {
                     JOptionPane.showMessageDialog(tabela, "ID do curso não encontrado!");
                     return;
                 }
 
-                // Converte o ID para long (trata tanto Integer quanto Long)
                 long id = ((Number)idObj).longValue();
-                
+
                 if ("Editar".equals(tipo)) {
-                    JOptionPane.showMessageDialog(tabela, 
-                    "Funcionalidade de edição em construção!",
-                    "Em Desenvolvimento",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    
+                    editarCurso(id);
                 } else if ("Remover".equals(tipo)) {
-                    // Confirmação antes de remover
-                    int confirm = JOptionPane.showConfirmDialog(
-                        tabela,
-                        "Deseja realmente remover o curso com ID " + id + "?",
-                        "Confirmação", 
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE
-                    );
-                    
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        // Chama método de remoção na tela principal
-                        CursoListar telaPrincipal = (CursoListar) SwingUtilities.getWindowAncestor(tabela);
-                        if (telaPrincipal != null) {
-                            telaPrincipal.removerCurso(id);
-                        } else {
-                            JOptionPane.showMessageDialog(tabela, 
-                                "Erro: Não foi possível remover o curso.",
-                                "Erro",
-                                JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
+                    removerCurso(id);
                 }
                 fireEditingStopped();
             }
         });
     }
 
- 
+    // Abre a tela de edição do curso
+    private void editarCurso(long id) {
+        try {
+            CursoList cursoList = new CursoList();
+            // Busca o curso pelo ID
+            Curso curso = cursoList.findById(id);
+            
+            if (curso != null) {
+                // Abre a tela de edição
+                CursoEditar editar = new CursoEditar(curso);
+                // Quando fechar, atualiza a tabela
+                editar.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        atualizarTabelaPrincipal();
+                    }
+                });
+                editar.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(tabela, "Curso não encontrado!");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(tabela, "Erro ao buscar o curso: " + ex.getMessage());
+        }
+    }
+
+    // Remove um curso após confirmação
+    private void removerCurso(long id) {
+        // Pede confirmação antes de remover
+        int confirm = JOptionPane.showConfirmDialog(
+            tabela,
+            "Deseja realmente remover o curso com ID " + id + "?",
+            "Confirmação", 
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+        
+        // Se confirmou, remove
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // Pega a tela principal pra atualizar depois
+                CursoListar telaPrincipal = (CursoListar) SwingUtilities.getWindowAncestor(tabela);
+                if (telaPrincipal != null) {
+                    telaPrincipal.removerCurso(id);
+                } else {
+                    JOptionPane.showMessageDialog(tabela, 
+                        "Erro: Não foi possível remover o curso.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(tabela, 
+                    "Erro ao remover curso: " + ex.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    // Atualiza a tabela principal
+    private void atualizarTabelaPrincipal() {
+        CursoListar telaPrincipal = (CursoListar) SwingUtilities.getWindowAncestor(tabela);
+        if (telaPrincipal != null) {
+            telaPrincipal.carregarDados();
+        }
+    }
+    // Carrega um ícone do projeto
     private ImageIcon loadIcon(String path) {
         URL imageURL = getClass().getResource(path);
         if (imageURL != null) {
@@ -94,8 +145,7 @@ public class BotaoRendererEditor extends AbstractCellEditor implements TableCell
             return null;
         }
     }
-
-    // Métodos obrigatórios das interfaces implementadas
+    // Métodos obrigatórios para renderizar e editar células
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
@@ -105,12 +155,12 @@ public class BotaoRendererEditor extends AbstractCellEditor implements TableCell
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value,
             boolean isSelected, int row, int column) {
-        this.linha = row;  // Atualiza a linha atual
+        this.linha = row;
         return button;
     }
 
     @Override
     public Object getCellEditorValue() {
-        return tipo;  // Retorna o tipo de botão
+        return tipo;
     }
 }

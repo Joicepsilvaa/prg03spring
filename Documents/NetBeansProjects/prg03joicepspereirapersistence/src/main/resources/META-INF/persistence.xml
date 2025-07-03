@@ -8,17 +8,18 @@
   <persistence-unit name="prg03persistenciaPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     
-    <!-- Corrigindo o pacote da entidade -->
+    <!-- Entidades -->
     <class>br.com.ifba.curso.entity.Curso</class>
     
     <properties>
       <!-- Conexão JDBC -->
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/prg03persistencia?useSSL=false&amp;serverTimezone=UTC"/>
+      <property name="javax.persistence.jdbc.url" 
+                value="jdbc:mysql://localhost:3306/prg03persistencia?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
       <property name="javax.persistence.jdbc.user" value="prg03"/>
       <property name="javax.persistence.jdbc.password" value="2025"/>
       
-      <!-- Hibernate -->
+      <!-- Configurações do Hibernate -->
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
       <property name="hibernate.show_sql" value="true"/>

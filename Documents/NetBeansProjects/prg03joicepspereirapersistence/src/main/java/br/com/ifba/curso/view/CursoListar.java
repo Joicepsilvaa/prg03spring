@@ -26,22 +26,21 @@ public class CursoListar extends javax.swing.JFrame {
         carregarDados();
     }
     
-    // Configura como a tabela vai mostrar os dados
+// Configura como a tabela vai mostrar os dados
 private void configurarTabela() {
-    // Modifique o modelo para incluir a coluna CÓDIGO
     DefaultTableModel model = new DefaultTableModel(
         new Object[]{"ID", "CÓDIGO", "NOME", "COORDENADOR", "EDITAR", "REMOVER"}, 0) {
         
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 4 || column == 5; // Ajuste os índices para as colunas de ação
+            return column == 4 || column == 5;
         }
     };
     
     tblCursos.setModel(model);
     tblCursos.setRowHeight(40);
     
-    // Ajuste os índices das colunas de ação
+    // Configura os botões de ação na tabela
     tblCursos.getColumn("EDITAR").setCellRenderer(new BotaoRendererEditor("Editar", tblCursos));
     tblCursos.getColumn("EDITAR").setCellEditor(new BotaoRendererEditor("Editar", tblCursos));
     
@@ -49,14 +48,16 @@ private void configurarTabela() {
     tblCursos.getColumn("REMOVER").setCellEditor(new BotaoRendererEditor("Remover", tblCursos));
 }
 
+// Atualiza os dados na tabela
 private void atualizarTabela(List<Curso> cursos) {
     DefaultTableModel model = (DefaultTableModel) tblCursos.getModel();
-    model.setRowCount(0);
+    model.setRowCount(0); // Limpa a tabela
     
+    // Adiciona cada curso como uma linha nova
     for (Curso curso : cursos) {
         model.addRow(new Object[]{
             curso.getId(),
-            curso.getCodigoCurso(), // Adiciona o código do curso
+            curso.getCodigoCurso(),
             curso.getNome(),
             curso.getCoordenador(),
             "Editar",

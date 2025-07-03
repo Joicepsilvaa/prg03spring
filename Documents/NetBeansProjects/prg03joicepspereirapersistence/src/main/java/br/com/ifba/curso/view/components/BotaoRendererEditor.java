@@ -49,7 +49,6 @@ public class BotaoRendererEditor extends AbstractCellEditor
             @Override
             public void actionPerformed(ActionEvent e) {
                 int linhaSelecionada = tabela.convertRowIndexToModel(linha);
-                // O ID agora está na coluna 0 (primeira coluna)
                 Object idObj = tabela.getModel().getValueAt(linhaSelecionada, 0);
 
                 if (idObj == null) {

@@ -4,8 +4,7 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.CursoSave;
-import br.com.ifba.CursoUpdate;
+import br.com.ifba.curso.dao.CursoDao;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 
@@ -204,18 +203,16 @@ public class CursoEditar extends javax.swing.JFrame {
         curso.setAtivo("Ativo".equalsIgnoreCase(disponibilidade));
 
         try {
-            //Decide se vai salvar novo ou atualizar existente
+            CursoDao cursoDao = new CursoDao();
+
             if (cursoExistente != null) {
-                CursoUpdate cursoUpdate = new CursoUpdate(); // Atualiza curso existente
-                cursoUpdate.update(curso); 
+                cursoDao.update(curso); 
             } else {
-                CursoSave cursoSave = new CursoSave(); // Salva novo curso
-                cursoSave.save(curso);
+                cursoDao.save(curso);
             }
-            
-            //Mostra mensagem de sucesso ou erro
+
             JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
-            dispose(); // Fecha a tela após salvar
+            dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
         }

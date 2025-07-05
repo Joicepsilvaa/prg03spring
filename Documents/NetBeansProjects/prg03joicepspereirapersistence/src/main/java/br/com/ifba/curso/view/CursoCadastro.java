@@ -4,7 +4,7 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.CursoSave;
+import br.com.ifba.curso.dao.CursoDao;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 
@@ -130,14 +130,11 @@ public class CursoCadastro extends javax.swing.JFrame {
         curso.setAtivo("Ativo".equalsIgnoreCase(disponibilidade));
 
         try {
-            // Salva no banco de dados
-            CursoSave cursoSave = new CursoSave();
-            cursoSave.save(curso);
-            JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
-
-            // Limpa os campos depois que salva
-            limparCampos();
-
+        // Usa o DAO diretamente para salvar
+        CursoDao cursoDao = new CursoDao();
+        cursoDao.save(curso);
+        JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
+        limparCampos();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
         }

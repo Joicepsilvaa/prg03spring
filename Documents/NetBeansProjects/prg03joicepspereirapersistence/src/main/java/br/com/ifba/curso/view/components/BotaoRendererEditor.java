@@ -1,6 +1,6 @@
 package br.com.ifba.curso.view.components;
 
-import br.com.ifba.CursoList;
+import br.com.ifba.curso.dao.CursoDao;
 import br.com.ifba.curso.entity.Curso;
 import br.com.ifba.curso.view.CursoEditar;
 import br.com.ifba.curso.view.CursoListar;
@@ -71,14 +71,11 @@ public class BotaoRendererEditor extends AbstractCellEditor
     // Abre a tela de edição do curso
     private void editarCurso(long id) {
         try {
-            CursoList cursoList = new CursoList();
-            // Busca o curso pelo ID
-            Curso curso = cursoList.findById(id);
-            
+            CursoDao cursoDao = new CursoDao();
+            Curso curso = cursoDao.findById(id);
+
             if (curso != null) {
-                // Abre a tela de edição
                 CursoEditar editar = new CursoEditar(curso);
-                // Quando fechar, atualiza a tabela
                 editar.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosed(java.awt.event.WindowEvent e) {

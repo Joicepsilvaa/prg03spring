@@ -5,12 +5,13 @@ package br.com.ifba.curso.view;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-import br.com.ifba.CursoDelete;
-import br.com.ifba.CursoList;
+import br.com.ifba.curso.dao.CursoDao;
 import br.com.ifba.curso.view.components.BotaoRendererEditor;
 import br.com.ifba.curso.entity.Curso;
+import br.com.ifba.infrastructure.util.JPAUtil;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -68,8 +69,8 @@ private void atualizarTabela(List<Curso> cursos) {
     // Busca todos os cursos no banco
     public void carregarDados() {
         try {
-            CursoList cursoList = new CursoList();
-            List<Curso> cursos = cursoList.findAll();
+            CursoDao cursoDao = new CursoDao();
+            List<Curso> cursos = cursoDao.findAll();
             atualizarTabela(cursos);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar cursos: " + e.getMessage());
@@ -78,8 +79,8 @@ private void atualizarTabela(List<Curso> cursos) {
     // Busca cursos pelo nome
     private List<Curso> buscarPorNome(String nome) {
         try {
-            CursoList cursoList = new CursoList();
-            return cursoList.findByNome(nome);
+            CursoDao cursoDao = new CursoDao();
+            return cursoDao.findByNome(nome);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao buscar cursos: " + e.getMessage());
             return new ArrayList<>(); // Retorna lista vazia se der erro
@@ -88,15 +89,44 @@ private void atualizarTabela(List<Curso> cursos) {
     
     // Remove um curso pelo ID
     public void removerCurso(long id) {
+        CursoDao cursoDao = new CursoDao();
+        EntityManager em = JPAUtil.getEntityManager();
+
         try {
-            CursoDelete cursoDelete = new CursoDelete();
-            cursoDelete.delete(id);
-            JOptionPane.showMessageDialog(this, "Curso removido com sucesso!");
-            carregarDados(); // Recarrega a lista
+            // Busca o curso dentro de uma transação
+            em.getTransaction().begin();
+            Curso curso = em.find(Curso.class, id);
+            em.getTransaction().commit();
+
+            if (curso != null) {
+                // Confirmação antes de remover
+                int confirm = JOptionPane.showConfirmDialog(
+                    this, 
+                    "Deseja realmente remover o curso: " + curso.getNome() + "?",
+                    "Confirmar Remoção",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    cursoDao.delete(curso);
+                    JOptionPane.showMessageDialog(this, "Curso removido com sucesso!");
+                    carregarDados(); // Atualiza a tabela
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Curso não encontrado!");
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao remover curso: " + e.getMessage());
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            JOptionPane.showMessageDialog(this, 
+                "Erro ao remover curso: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+        } finally {
+            em.close();
         }
-    }
+}
 
     // Método para atualizar a lista após cadastro/edição
     public void atualizarLista() {

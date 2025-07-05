@@ -4,6 +4,7 @@
  */
 package br.com.ifba.curso.entity;
 
+import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +18,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "cursos")
-public class Curso {
+public class Curso extends PersistenceEntity{
     
     // Id unico gerado automaticamente
     @Id

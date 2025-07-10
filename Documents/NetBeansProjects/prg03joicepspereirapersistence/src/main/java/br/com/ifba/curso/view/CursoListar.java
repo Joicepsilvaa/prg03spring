@@ -5,20 +5,19 @@ package br.com.ifba.curso.view;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-import br.com.ifba.curso.dao.CursoDao;
+import br.com.ifba.curso.controller.CursoController;
 import br.com.ifba.curso.view.components.BotaoRendererEditor;
 import br.com.ifba.curso.entity.Curso;
-import br.com.ifba.infrastructure.util.JPAUtil;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Joice
  */
-public class CursoListar extends javax.swing.JFrame {
+public final class CursoListar extends javax.swing.JFrame {
+    private final CursoController cursoController = new CursoController();
+    
     public CursoListar() {
         
         initComponents();
@@ -49,84 +48,79 @@ private void configurarTabela() {
     tblCursos.getColumn("REMOVER").setCellEditor(new BotaoRendererEditor("Remover", tblCursos));
 }
 
-// Atualiza os dados na tabela
-private void atualizarTabela(List<Curso> cursos) {
-    DefaultTableModel model = (DefaultTableModel) tblCursos.getModel();
-    model.setRowCount(0); // Limpa a tabela
-    
-    // Adiciona cada curso como uma linha nova
-    for (Curso curso : cursos) {
-        model.addRow(new Object[]{
-            curso.getId(),
-            curso.getCodigoCurso(),
-            curso.getNome(),
-            curso.getCoordenador(),
-            "Editar",
-            "Remover"
-        });
+    // Atualiza os dados na tabela
+    public void atualizarTabela(List<Curso> cursos) {
+        //pega o modelo da tabela
+        DefaultTableModel model = (DefaultTableModel) tblCursos.getModel();
+        //remove todos os registros atuais
+        model.setRowCount(0);
+            // Adiciona cada curso como uma nova linha
+            for (Curso curso : cursos) {
+                model.addRow(new Object[]{
+                    curso.getId(),
+                    curso.getCodigoCurso(),
+                    curso.getNome(),
+                    curso.getCoordenador(),
+                    "Editar",
+                    "Remover"
+                });
+            }
     }
-}
     // Busca todos os cursos no banco
     public void carregarDados() {
         try {
-            CursoDao cursoDao = new CursoDao();
-            List<Curso> cursos = cursoDao.findAll();
+            // Cria um novo controller para garantir nova sessão
+            CursoController tempController = new CursoController();
+            List<Curso> cursos = tempController.findAll();
             atualizarTabela(cursos);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao carregar cursos: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erro ao carregar: " + e.getMessage(),"Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     // Busca cursos pelo nome
-    private List<Curso> buscarPorNome(String nome) {
+    private void buscarPorNome(String nome) {
         try {
-            CursoDao cursoDao = new CursoDao();
-            return cursoDao.findByNome(nome);
+            //faz a busca via controller
+            List<Curso> cursos = cursoController.findByNome(nome);
+            if (cursos.isEmpty()) {
+                //mensagem caso não encontre nenhum curso com o termo
+                JOptionPane.showMessageDialog(this, "Nenhum curso encontrado com o termo: " + nome, "Aviso",  JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                //atualiza a tabela com os dados encotrados
+                atualizarTabela(cursos);
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao buscar cursos: " + e.getMessage());
-            return new ArrayList<>(); // Retorna lista vazia se der erro
+            JOptionPane.showMessageDialog(this, 
+                "Erro ao buscar cursos: " + e.getMessage(),
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
     // Remove um curso pelo ID
     public void removerCurso(long id) {
-        CursoDao cursoDao = new CursoDao();
-        EntityManager em = JPAUtil.getEntityManager();
-
         try {
-            // Busca o curso dentro de uma transação
-            em.getTransaction().begin();
-            Curso curso = em.find(Curso.class, id);
-            em.getTransaction().commit();
+            // Cria um controller temporário só para encontrar o curso
+            CursoController tempController = new CursoController();
+            Curso curso = tempController.findById(id);
 
             if (curso != null) {
-                // Confirmação antes de remover
-                int confirm = JOptionPane.showConfirmDialog(
-                    this, 
-                    "Deseja realmente remover o curso: " + curso.getNome() + "?",
-                    "Confirmar Remoção",
-                    JOptionPane.YES_NO_OPTION
-                );
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    cursoDao.delete(curso);
+                    // Cria um novo controller especifico para a excluir
+                    CursoController deleteController = new CursoController();
+                    deleteController.delete(curso);
+
                     JOptionPane.showMessageDialog(this, "Curso removido com sucesso!");
-                    carregarDados(); // Atualiza a tabela
-                }
+
+                    // Atualiza a tabela com um novo controller
+                    carregarDados();
             } else {
                 JOptionPane.showMessageDialog(this, "Curso não encontrado!");
             }
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            JOptionPane.showMessageDialog(this, 
-                "Erro ao remover curso: " + e.getMessage(),
-                "Erro",
-                JOptionPane.ERROR_MESSAGE);
-        } finally {
-            em.close();
+            JOptionPane.showMessageDialog(this, "Erro ao remover curso: " + e.getMessage(),  "Erro", JOptionPane.ERROR_MESSAGE);
         }
-}
+    }
 
     // Método para atualizar a lista após cadastro/edição
     public void atualizarLista() {
@@ -228,34 +222,30 @@ private void atualizarTabela(List<Curso> cursos) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        // TODO add your handling code here:
-        // Cria e exibe a tela CursoCadastro
+        // Cria uma nova instância da tela de cadastro
         CursoCadastro cadastro = new CursoCadastro();
+        // Adiciona um listener para quando a janela for fechada
         cadastro.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
-                // Quando fechar a tela de cadastro, recarrega os dados
+                // Recarrega os dados da tabela quando o cadastro é fechado
                 carregarDados();
             }
         });
+        // Exibe a tela de cadastro
         cadastro.setVisible(true);
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        // TODO add your handling code here:
+        // Pega o termo de pesquisa digitado 
         String termo = txtPesquisar.getText().trim();
-        
+        // Verifica se o campo de pesquisa ta vazio
         if (termo.isEmpty()) {
-            //Se não digitou nada, mostra tudo
+            // Mostra todos os cursos se tiver vazio
             carregarDados();
         } else {
-            //Busca cursos com o nome digitado
-            List<Curso> cursos = buscarPorNome(termo);
-            if (cursos.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Nenhum curso encontrado com o termo: " + termo);
-            } else {
-                atualizarTabela(cursos);
-            }
+            // Caso contrário, realiza a pesquisa por nome
+            buscarPorNome(termo);
         }
     }//GEN-LAST:event_btnPesquisarActionPerformed
     /**

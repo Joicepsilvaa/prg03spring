@@ -4,9 +4,11 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.curso.dao.CursoDao;
+import br.com.ifba.curso.controller.CursoController;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
+
+
 
 /**
  *
@@ -14,9 +16,8 @@ import javax.swing.JOptionPane;
  */
 public class CursoCadastro extends javax.swing.JFrame {
 
-    /**
-     * Creates new form CursoCadastro
-     */
+    private final CursoController cursoController = new CursoController();
+     
     public CursoCadastro() {
         initComponents();
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -130,9 +131,8 @@ public class CursoCadastro extends javax.swing.JFrame {
         curso.setAtivo("Ativo".equalsIgnoreCase(disponibilidade));
 
         try {
-        // Usa o DAO diretamente para salvar
-        CursoDao cursoDao = new CursoDao();
-        cursoDao.save(curso);
+         // Chama o controller para salvar
+        cursoController.save(curso);
         JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
         limparCampos();
         } catch (Exception e) {

@@ -4,7 +4,7 @@
  */
 package br.com.ifba.curso.view;
 
-import br.com.ifba.curso.dao.CursoDao;
+import br.com.ifba.curso.controller.CursoController;
 import br.com.ifba.curso.entity.Curso;
 import javax.swing.JOptionPane;
 
@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
  */
 public class CursoEditar extends javax.swing.JFrame {
 
+    private final CursoController cursoController = new CursoController();
     private Curso cursoExistente; // Guarda o curso que está sendo editado
     /**
      * Creates new form CursoEditar
@@ -42,6 +43,21 @@ public class CursoEditar extends javax.swing.JFrame {
     public CursoEditar() {
     this(new Curso()); // Cria um curso vazio e reutiliza o outro construtor
 }
+    private boolean validarCampos() {
+        if (txtNome.getText().trim().isEmpty() || txtCoordenador.getText().trim().isEmpty() || 
+            cbbDisponibilidade.getSelectedItem() == null) {
+            
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios!", "Validação", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+    private void atualizarCurso(Curso curso) {
+        curso.setNome(txtNome.getText().trim());
+        curso.setCodigoCurso(txtCodigo.getText().trim());
+        curso.setCoordenador(txtCoordenador.getText().trim());
+        curso.setAtivo("Ativo".equalsIgnoreCase((String) cbbDisponibilidade.getSelectedItem()));
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -182,39 +198,29 @@ public class CursoEditar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // Pega os valores dos campos
-        String nome = txtNome.getText().trim();
-        String coordenador = txtCoordenador.getText().trim();
-        String disponibilidade = (String) cbbDisponibilidade.getSelectedItem();
-
-        // Verifica se os campos obrigatórios foram preenchidos
-        if (nome.isEmpty() || coordenador.isEmpty() || disponibilidade == null) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
-            return;
+        //validação dos campos
+        if (!validarCampos()) {
+            return; //interrompe se a validação falhar
         }
 
-        //Se for novo, cria um novo objeto, se for edição atualiza o existente
-        Curso curso = (cursoExistente != null) ? cursoExistente : new Curso();
-
-        //Atualiza os dados do curso
-        curso.setNome(nome);
-        curso.setCodigoCurso(txtCodigo.getText());
-        curso.setCoordenador(coordenador);
-        curso.setAtivo("Ativo".equalsIgnoreCase(disponibilidade));
-
         try {
-            CursoDao cursoDao = new CursoDao();
-
+            //Se for novo, cria um novo objeto, se for edição atualiza o existente
+            Curso curso = (cursoExistente != null) ? cursoExistente : new Curso();
+            //atualiza com os dados do formuláro
+            atualizarCurso(curso);
+            
+            //persiste os dados
             if (cursoExistente != null) {
-                cursoDao.update(curso); 
+                cursoController.update(curso); //edição
             } else {
-                cursoDao.save(curso);
+                cursoController.save(curso); //novo cadastro
             }
 
-            JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!");
-            dispose();
+            JOptionPane.showMessageDialog(this, "Curso salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            
+            this.dispose();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erro ao salvar curso: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 

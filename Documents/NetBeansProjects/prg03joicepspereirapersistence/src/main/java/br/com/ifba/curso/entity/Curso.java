@@ -5,12 +5,9 @@
 package br.com.ifba.curso.entity;
 
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  *
@@ -19,11 +16,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "cursos")
 public class Curso extends PersistenceEntity{
-    
-    // Id unico gerado automaticamente
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
     
     // coluna nome na tabela não pode ser nula
     @Column (name = "nome", nullable = false)
@@ -39,11 +31,6 @@ public class Curso extends PersistenceEntity{
     // coluna ativo na tabela indica se o curso esta ativo ou não
     @Column (name = "ativo")
     private boolean ativo;
-
-    //Métodos getters e setters
-    public long getId() {
-        return id;
-    }
 
     public String getNome() {
         return nome;

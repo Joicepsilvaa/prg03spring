@@ -5,6 +5,7 @@
 package br.com.ifba.curso.service;
 
 import br.com.ifba.curso.entity.Curso;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
@@ -13,10 +14,10 @@ import java.util.List;
  */
 public interface CursoIService {
     
-    Curso saveCurso(Curso curso);
-    Curso updateCurso(Curso curso);
-    void deleteCurso(Curso curso);
-    List<Curso> findAllCursos();
-    List<Curso> findCursosByNome(String nome);
-    Curso findCursoById(Long id);
+    public abstract List<Curso> findAll() throws RuntimeException;
+    public abstract void save(Curso curso) throws RuntimeException;
+    public abstract void update(Curso curso) throws RuntimeException, EntityNotFoundException;
+    public abstract void delete(Curso curso) throws RuntimeException, EntityNotFoundException;
+    public abstract Curso findById(Long id) throws RuntimeException;
+    public abstract List<Curso> findByNome(String nome) throws RuntimeException;
 }

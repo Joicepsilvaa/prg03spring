@@ -1,5 +1,6 @@
 package br.com.ifba.curso.view.components;
 
+import br.com.ifba.curso.controller.CursoController;
 import br.com.ifba.curso.dao.CursoDao;
 import br.com.ifba.curso.entity.Curso;
 import br.com.ifba.curso.view.CursoEditar;
@@ -8,6 +9,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -93,7 +95,6 @@ public class BotaoRendererEditor extends AbstractCellEditor
 
     // Remove um curso após confirmação
     private void removerCurso(long id) {
-        // Pede confirmação antes de remover
         int confirm = JOptionPane.showConfirmDialog(
             tabela,
             "Deseja realmente remover o curso com ID " + id + "?",
@@ -101,17 +102,17 @@ public class BotaoRendererEditor extends AbstractCellEditor
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE
         );
-        
-        // Se confirmou, remove
+
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // Pega a tela principal pra atualizar depois
-                CursoListar telaPrincipal = (CursoListar) SwingUtilities.getWindowAncestor(tabela);
-                if (telaPrincipal != null) {
+                // Alternativa mais robusta para obter a janela principal
+                java.awt.Window window = SwingUtilities.getWindowAncestor(tabela);
+                if (window instanceof CursoListar) {
+                    CursoListar telaPrincipal = (CursoListar) window;
                     telaPrincipal.removerCurso(id);
                 } else {
                     JOptionPane.showMessageDialog(tabela, 
-                        "Erro: Não foi possível remover o curso.",
+                        "Erro: Janela principal não encontrada.",
                         "Erro",
                         JOptionPane.ERROR_MESSAGE);
                 }
@@ -126,10 +127,28 @@ public class BotaoRendererEditor extends AbstractCellEditor
 
     // Atualiza a tabela principal
     private void atualizarTabelaPrincipal() {
-        CursoListar telaPrincipal = (CursoListar) SwingUtilities.getWindowAncestor(tabela);
-        if (telaPrincipal != null) {
-            telaPrincipal.carregarDados();
-        }
+        // Isso garante que a atualização aconteça na thread da interface
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            // Cria uma NOVA instância do controller para evitar problemas de sessão
+            CursoController novoController = new CursoController();
+
+            // Obtém a janela principal de forma segura
+            java.awt.Window window = SwingUtilities.getWindowAncestor(tabela);
+            if (window instanceof CursoListar) {
+                CursoListar telaPrincipal = (CursoListar) window;
+
+                // Atualiza a tabela usando o novo controller
+                try {
+                    List<Curso> cursos = novoController.findAll();
+                    telaPrincipal.atualizarTabela(cursos);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(tabela, 
+                        "Erro ao atualizar: " + ex.getMessage(),
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
     // Carrega um ícone do projeto
     private ImageIcon loadIcon(String path) {

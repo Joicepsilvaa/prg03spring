@@ -17,6 +17,9 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>21</release>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
@@ -30,16 +33,16 @@
     <dependencies>
         <!-- Hibernate Core (JPA provider) -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.6.15.Final</version>
+            <version>6.4.4.Final</version> <!-- Atualizado para versão mais recente -->
         </dependency>
 
         <!-- Jakarta Persistence API -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>2.2.3</version>
+            <version>3.1.0</version>
         </dependency>
 
         <!-- MySQL JDBC Driver -->
@@ -48,6 +51,7 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
+
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>

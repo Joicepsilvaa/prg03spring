@@ -12,22 +12,28 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.ifba.curso.repository.CursoRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author Joice
  */
 @Service
+@RequiredArgsConstructor
+@Slf4j 
 public class CursoService implements CursoIService {
 
     @Autowired
-    private CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
     @Override
     @Transactional
     public void save(Curso curso) {
         validateFields(curso);
-        cursoRepository.save(curso);
+        log.info("[CursoService] Iniciando salvamento de curso...");
+        cursoRepository.save(curso);       
+        log.info("[CursoService] Curso salvo com sucesso.");
     }
 
     @Override

@@ -8,6 +8,7 @@ import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Entity
 @Table(name = "cursos")
 @Component
+@Data
 public class Curso extends PersistenceEntity{
     
     // coluna nome na tabela não pode ser nula
@@ -33,38 +35,5 @@ public class Curso extends PersistenceEntity{
     // coluna ativo na tabela indica se o curso esta ativo ou não
     @Column (name = "ativo")
     private boolean ativo;
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCodigoCurso() {
-        return codigoCurso;
-    }
-
-    public void setCodigoCurso(String codigoCurso) {
-        this.codigoCurso = codigoCurso;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
-
-    public String getCoordenador() {
-        return coordenador;
-    }
-
-    public void setCoordenador(String coordenador) {
-        this.coordenador = coordenador;
-    }
-
 
 }

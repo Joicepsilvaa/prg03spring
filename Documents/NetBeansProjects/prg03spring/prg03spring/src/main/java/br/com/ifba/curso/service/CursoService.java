@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import br.com.ifba.curso.repository.CursoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -26,6 +28,9 @@ public class CursoService implements CursoIService {
 
     @Autowired
     private final CursoRepository cursoRepository;
+    
+    private static final Logger log = LoggerFactory.
+                              getLogger(CursoService.class);
 
     @Override
     @Transactional
@@ -46,10 +51,12 @@ public class CursoService implements CursoIService {
         }
 
         cursoRepository.save(curso);
+        log.info("Curso" + curso + "teve suas informações alteradas");
     }
 
     @Override
     public List<Curso> findAll() {
+        log.info("Listando cursos");
         return cursoRepository.findAll();
     }
 
@@ -82,6 +89,7 @@ public class CursoService implements CursoIService {
             .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + curso.getId()));
 
         cursoRepository.delete(existente);
+        log.info("Curso" + curso + "foi excluído");
     }
    // Método de validação
      public void validateFields(Curso curso) {
